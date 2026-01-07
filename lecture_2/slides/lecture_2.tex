@@ -2,8 +2,8 @@
 \usetheme{Madrid}
 \usecolortheme{default}
 
-\title{Lecture 2}
-\subtitle{AI and Career Development}
+\title{Lecture 2: Marketing Automation with HITL}
+\subtitle{Structured outputs, evaluation loops, and human review}
 \author{University of Chicago}
 \date{\today}
 
@@ -11,20 +11,116 @@
 
 \frame{\titlepage}
 
-\begin{frame}{Introduction}
+\begin{frame}{What you will build today}
 \begin{itemize}
-    \item This lecture will cover \ldots
-    \item Interactive components will be in the notebooks directory
+  \item A reproducible workflow that turns lead data into outreach drafts
+  \item A quality-control (QC) step that flags risky/low-quality outputs
+  \item A simple human-in-the-loop (HITL) review queue for approvals/edits
+  \item A tiny evaluation harness to compare prompt versions
 \end{itemize}
 \end{frame}
 
-% Add your slides here
+\begin{frame}{Business problem}
+\textbf{Scenario}: You're on a growth team. You have many inbound leads and limited human time.
+\vspace{0.4cm}
 
-\begin{frame}{Questions?}
-\begin{center}
-\Large
-Thank you!
-\end{center}
+\textbf{Goal}: Generate compliant, personalized outreach at scale while minimizing:
+\begin{itemize}
+  \item hallucinated claims
+  \item policy / compliance violations
+  \item off-brand tone
+  \item missing personalization
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Inputs (provided in \texttt{lecture\_2/data})}
+\begin{itemize}
+  \item \texttt{leads.csv}: lead attributes and notes
+  \item \texttt{product\_one\_pager.md}: facts you are allowed to use
+  \item \texttt{brand\_guidelines.md}: tone and style constraints
+  \item \texttt{rubric.md}: what counts as a ``good'' draft
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Workflow (high-level)}
+\begin{enumerate}
+  \item \textbf{Summarize} lead notes $\rightarrow$ JSON
+  \item \textbf{Draft} email + subject $\rightarrow$ JSON
+  \item \textbf{QC} pass: check claims, tone, constraints $\rightarrow$ risk score + reasons
+  \item \textbf{HITL} queue: approve / edit / reject
+  \item \textbf{Evaluate}: measure pass-rate across a small set
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{New workflow primitive introduced}
+\begin{itemize}
+  \item \textbf{Human-in-the-loop review}: you do not ship raw model output to customers
+  \item \textbf{Evaluation harness}: treat prompt edits like code changes (measure impact)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Structured output schemas (examples)}
+\textbf{Lead summary schema}
+\begin{itemize}
+  \item \texttt{lead\_summary} (string)
+  \item \texttt{pain\_points} (list[string])
+  \item \texttt{suggested\_angle} (string)
+  \item \texttt{missing\_info} (list[string])
+\end{itemize}
+\vspace{0.3cm}
+\textbf{Draft schema}
+\begin{itemize}
+  \item \texttt{subject} (string)
+  \item \texttt{email\_body} (string)
+  \item \texttt{personalization\_tokens} (list[string])
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Exercises}
+\begin{itemize}
+  \item Baseline prompt $\rightarrow$ get working JSON output
+  \item Improve personalization while keeping compliance constraints
+  \item Add QC checks: hallucination/claims, tone, forbidden phrases
+  \item Implement a HITL review loop in the notebook
+  \item Run the mini-eval and compare prompt versions
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Deliverable}
+\begin{itemize}
+  \item \texttt{notebooks/lecture\_2\_marketing\_hitl.ipynb}
+  \item Output files in \texttt{data/outputs/}:
+    \begin{itemize}
+      \item \texttt{drafts.csv} (final approved drafts)
+      \item \texttt{qc\_report.csv} (scores + reasons)
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Extensions / Optional challenges}
+\begin{itemize}
+  \item \textbf{Rubric-based grader}: have the model score drafts using \texttt{rubric.md}; compare to human scores
+  \item \textbf{Batching + cost controls}: cache summaries; estimate tokens/cost; compare one-pass vs two-pass QC
+  \item \textbf{Policy-driven compliance}: map \texttt{compliance\_tags} to explicit deny/allow rules and required disclaimers
+  \item \textbf{Prompt/version tracking}: log prompts + model + params alongside outputs for reproducibility
+  \item \textbf{Multi-variant testing}: A/B prompt variants; select winners by eval metrics
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Discussion}
+\begin{itemize}
+  \item Where did the model fail? (missing facts vs wrong facts vs style)
+  \item What did structured output enable?
+  \item What checks should be automated vs left to humans?
+  \item How do cost and latency constrain the pipeline?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Next time}
+\begin{itemize}
+  \item Add external actions (APIs) and state management
+  \item Ground responses in a knowledge base
+\end{itemize}
 \end{frame}
 
 \end{document}

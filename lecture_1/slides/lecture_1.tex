@@ -1,15 +1,103 @@
 \documentclass[aspectratio=169]{beamer}
 \usetheme{Madrid}
 \usecolortheme{default}
+\usepackage{tikz}
+\usetikzlibrary{calc}
 
-\title{LLMs, Agents, and MCP}
-\subtitle{Part 1: Large Language Models (LLMs) - Starting from Zero}
+\title{DSI: AI Development Program}
+\subtitle{Part 1: Introduction to AI }
 \author{University of Chicago}
 \date{\today}
 
 \begin{document}
 
 \frame{\titlepage}
+
+% Basics of building AI Systems
+\section{Introduction and Overview}
+
+\begin{frame}
+	\begin{itemize}
+		\item Who am I
+		\item Learning Objectives
+        \item Basics and Terminology
+        \item Basics of Building		
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Who am I}
+\begin{itemize}
+\item Director Data Science Clinic
+\item Undergrad: UC Berkeley, PhD: UCLA
+\item Worked in Consulting, Video Games, AI
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Some Games I've Worked on}
+% Images live in: lecture_1/slides/images/
+% Collage layout with intentional overlap (TikZ absolute positioning).
+\begin{tikzpicture}[remember picture,overlay]
+  \coordinate (NW) at (current page.north west);
+
+  % NOTE: Use a consistent anchor everywhere (north west) and position by offsets.
+  % The order matters (later nodes sit on top of earlier ones).
+
+
+  \node[anchor=north west] at ($(NW)+(0.04\paperwidth,-0.1\paperheight)$) {%
+    \IfFileExists{images/kovaak.jpg}{\includegraphics[width=0.46\paperwidth]{images/kovaak.jpg}}{}%
+  };
+
+  \node[anchor=north west] at ($(NW)+(0.48\paperwidth,-0.1\paperheight)$) {%
+    \IfFileExists{images/familyguyquestforstuff.png}{\includegraphics[width=0.34\paperwidth]{images/familyguyquestforstuff.png}}{}%
+  };
+
+
+  \node[anchor=north west] at ($(NW)+(0.02\paperwidth,-0.4\paperheight)$) {%
+    \IfFileExists{images/cityrush.jpg}{\includegraphics[width=0.28\paperwidth]{images/cityrush.jpg}}{}%
+  };
+
+
+  \node[anchor=north west] at ($(NW)+(0.49\paperwidth,-0.435\paperheight)$) {%
+    \IfFileExists{images/spellstorm.jpg}{\includegraphics[width=0.28\paperwidth]{images/spellstorm.jpg}}{}%
+  };
+
+
+
+  \node[anchor=north west] at ($(NW)+(0.3\paperwidth,-0.4\paperheight)$) {%
+    \IfFileExists{images/wofp.jpg}{\includegraphics[width=0.2\paperwidth]{images/wofp.jpg}}{}%
+  };
+
+  \node[anchor=north west] at ($(NW)+(0.8\paperwidth,-0.1\paperheight)$) {%
+    \IfFileExists{images/sonicdash.jpg}{\includegraphics[width=0.2\paperwidth]{images/sonicdash.jpg}}{}%
+  };
+
+
+
+  \node[anchor=north west] at ($(NW)+(0.80\paperwidth,-0.72\paperheight)$) {%
+    \IfFileExists{images/vippoker.jpg}{\includegraphics[width=0.13\paperwidth]{images/vippoker.jpg}}{}%
+  };
+
+  \node[anchor=north west] at ($(NW)+(0.75\paperwidth,-0.45\paperheight)$) {%
+    \IfFileExists{images/tinyzoo_friends.jpg}{\includegraphics[width=0.22\paperwidth]{images/tinyzoo_friends.jpg}}{}%
+  };
+
+
+
+  \node[anchor=north west] at ($(NW)+(0.23\paperwidth,-0.76\paperheight)$) {%
+    \IfFileExists{images/sonicjumpfever.jpg}{\includegraphics[width=0.1\paperwidth]{images/sonicjumpfever.jpg}}{}%
+  };
+
+  \node[anchor=north west] at ($(NW)+(0.50\paperwidth,-0.7\paperheight)$) {%
+    \IfFileExists{images/TinyMonsters.png}{\includegraphics[width=0.26\paperwidth]{images/TinyMonsters.png}}{}%
+  };
+  
+\end{tikzpicture}
+\end{frame}
+    
+
+
+
 
 \section{Part 1: Large Language Models (LLMs)}
 
@@ -75,6 +163,71 @@
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Context windows: what they are (and why you care)}
+\begin{itemize}
+    \item The \textbf{context window} is the model's working memory for a single request
+    \item Everything the model can use must fit inside it:
+    \begin{itemize}
+        \item system prompt + developer instructions
+        \item user messages
+        \item tool outputs / retrieved documents
+        \item the model's own previous messages (in chat)
+    \end{itemize}
+    \item When you exceed the window, something gets dropped or truncated
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Context windows: practical implications}
+\begin{itemize}
+    \item \textbf{Tradeoffs}: more context can improve grounding, but increases cost/latency
+    \item \textbf{Recency and placement matter}: newer text is usually attended to more
+    \item \textbf{Failure modes} to watch for:
+    \begin{itemize}
+        \item forgetting earlier constraints
+        \item losing critical details due to truncation
+        \item quoting the wrong source when too many docs are included
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{System prompts: role and best practices}
+\begin{itemize}
+    \item The \textbf{system prompt} sets the highest-level behavior (tone, rules, safety, format)
+    \item Use it to encode \textbf{non-negotiables}:
+    \begin{itemize}
+        \item output format requirements (e.g., JSON only)
+        \item refusal and safety rules
+        \item grounding requirements (cite sources; do not invent facts)
+    \end{itemize}
+    \item Keep it \textbf{short, explicit, testable}; avoid vague goals like ``be helpful''
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Context engineering (a.k.a. make the model successful)}
+\begin{itemize}
+    \item \textbf{Context engineering} = designing what goes into the context window so the model can reliably do the task
+    \item Common building blocks:
+    \begin{itemize}
+        \item task definition + success criteria
+        \item constraints and policies (what is allowed/not allowed)
+        \item examples (few-shot) and edge cases
+        \item retrieved evidence (RAG) with citations
+        \item tool schemas for structured interaction with code
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A simple context template (recommended)}
+\begin{enumerate}
+    \item \textbf{System}: rules, safety, output format
+    \item \textbf{Developer}: task-specific policies (what to do, what not to do)
+    \item \textbf{User}: the request + required inputs
+    \item \textbf{Evidence}: only the relevant retrieved snippets (not entire documents)
+    \item \textbf{Tools}: schemas + allowed actions
+    \item \textbf{Final}: ``Return JSON only'' / ``Cite sources'' / ``Ask clarifying questions if needed''
+\end{enumerate}
+\end{frame}
+
 \begin{frame}{Example LLM Models: Commercial}
 \begin{itemize}
     \item \textbf{GPT-4} (OpenAI)
@@ -125,6 +278,83 @@
         \item Easy to switch between models
     \end{itemize}
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Token economics: why tokens matter}
+\begin{itemize}
+    \item Most LLM APIs charge by tokens:
+    \begin{itemize}
+        \item \textbf{input tokens} (prompt, system prompt, retrieved docs, tool outputs)
+        \item \textbf{output tokens} (the model's response)
+    \end{itemize}
+    \item Cost and latency generally scale with total tokens processed
+    \item \textbf{Context engineering is cost engineering}:
+    \begin{itemize}
+        \item tighter prompts $\rightarrow$ lower cost and often higher reliability
+        \item smaller context when possible $\rightarrow$ faster, cheaper
+    \end{itemize}
+\end{itemize}
+\vspace{0.2cm}
+\footnotesize Pricing references: \url{https://openai.com/api/pricing/}
+\end{frame}
+
+\begin{frame}{Cost math (simple model)}
+\begin{itemize}
+    \item Typical pricing is ``\$ per 1M tokens''
+    \item Approximate cost per call:
+    \[
+      \text{cost} \approx \left(\frac{T_{in}}{10^6} \cdot p_{in}\right) + \left(\frac{T_{out}}{10^6} \cdot p_{out}\right)
+    \]
+    \item Engineering levers:
+    \begin{itemize}
+        \item reduce retrieved context (better retrieval, smaller snippets)
+        \item constrain output length (max tokens, structured output)
+        \item pick the cheapest model that meets quality requirements
+        \item cache repeated context (where supported)
+    \end{itemize}
+\end{itemize}
+\vspace{0.2cm}
+\footnotesize Pricing references: \url{https://openai.com/api/pricing/}
+\end{frame}
+
+\begin{frame}{Real-world pricing examples (text)}
+\textbf{Example (OpenAI GPT-4.1 family; per 1M tokens)}\vspace{0.2cm}
+
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Model} & \textbf{Input} & \textbf{Output} \\
+\hline
+GPT-4.1 & \$2.00 & \$8.00 \\
+GPT-4.1 mini & \$0.40 & \$1.60 \\
+GPT-4.1 nano & \$0.10 & \$0.40 \\
+\hline
+\end{tabular}
+
+\vspace{0.4cm}
+\begin{itemize}
+    \item Decision implication: use smaller/cheaper models for simpler tasks (classification, routing, QC), reserve larger models for harder steps
+\end{itemize}
+\vspace{0.2cm}
+\footnotesize Source: \url{https://openai.com/index/gpt-4-1/}
+\end{frame}
+
+\begin{frame}{Multimodal pricing: what changes?}
+\begin{itemize}
+    \item Multimodal models may price \textbf{each modality differently}:
+    \begin{itemize}
+        \item text tokens (input/output)
+        \item image generation (often priced by image or image tokens)
+        \item audio tokens (speech in/out) and realtime usage
+        \item video generation (often priced per second/resolution)
+    \end{itemize}
+    \item Decision implication:
+    \begin{itemize}
+        \item use multimodal only when it adds value (OCR, visual QA, audio transcription)
+        \item consider hybrid pipelines (cheap OCR $\rightarrow$ text-only LLM) to control cost
+    \end{itemize}
+\end{itemize}
+\vspace{0.2cm}
+\footnotesize Pricing references: \url{https://openai.com/api/pricing/} \; and \url{https://platform.openai.com/docs/pricing}
 \end{frame}
 
 \begin{frame}{LLM Limitations}

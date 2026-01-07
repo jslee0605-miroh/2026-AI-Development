@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Introduction and Overview}{2}{0}{1}
+\beamer@sectionintoc {2}{Part 1: Large Language Models (LLMs)}{5}{0}{2}
+\beamer@sectionintoc {3}{Part 2: AI Agents}{23}{0}{3}
+\beamer@sectionintoc {4}{Part 3: Tools}{27}{0}{4}
+\beamer@sectionintoc {5}{Part 4: Model Context Protocol (MCP)}{29}{0}{5}
+\beamer@sectionintoc {6}{Part 5: Claude Skills}{35}{0}{6}
+\beamer@sectionintoc {7}{Part 6: How Everything Works Together}{36}{0}{7}

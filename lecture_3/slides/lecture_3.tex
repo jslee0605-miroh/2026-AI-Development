@@ -2,8 +2,8 @@
 \usetheme{Madrid}
 \usecolortheme{default}
 
-\title{Lecture 3}
-\subtitle{AI and Career Development}
+\title{Lecture 3: Support Triage + API Actions}
+\subtitle{Grounding, state, and safe external calls}
 \author{University of Chicago}
 \date{\today}
 
@@ -11,20 +11,79 @@
 
 \frame{\titlepage}
 
-\begin{frame}{Introduction}
+\begin{frame}{What you will build today}
 \begin{itemize}
-    \item This lecture will cover \ldots
-    \item Interactive components will be in the notebooks directory
+  \item A ticket triage pipeline (priority, category, route) using structured output
+  \item A grounded draft response that cites a knowledge base (KB)
+  \item A proposed action plan mapped to an allow-listed set of API calls
+  \item A safe execution layer: validation + logging + failure handling
 \end{itemize}
 \end{frame}
 
-% Add your slides here
+\begin{frame}{Business problem}
+\textbf{Scenario}: Customer support receives many tickets with uneven quality.
+\vspace{0.4cm}
 
-\begin{frame}{Questions?}
-\begin{center}
-\Large
-Thank you!
-\end{center}
+\textbf{Goal}: For each ticket, produce:
+\begin{itemize}
+  \item triage labels (priority/category/route)
+  \item a grounded draft reply (citing KB snippets)
+  \item \emph{optional} actions (create issue, refund request, CRM note) via APIs
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Inputs (provided in \texttt{lecture\_3/data})}
+\begin{itemize}
+  \item \texttt{tickets.jsonl}: support tickets
+  \item \texttt{kb/}: short markdown KB articles
+  \item \texttt{api\_stub\_data.json}: local ``API'' data used by stub calls
+\end{itemize}
+\end{frame}
+
+\begin{frame}{New workflow primitive introduced}
+\begin{itemize}
+  \item \textbf{External actions}: turn model output into calls (safely!)
+  \item \textbf{State}: tickets move through stages; we keep an audit log
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Pipeline}
+\begin{enumerate}
+  \item Parse ticket $\rightarrow$ triage JSON
+  \item Retrieve relevant KB snippets (simple search) $\rightarrow$ context
+  \item Draft reply with citations $\rightarrow$ JSON
+  \item Propose actions $\rightarrow$ JSON (allow-listed)
+  \item Validate + execute stub APIs; write logs
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Exercises}
+\begin{itemize}
+  \item Improve routing accuracy with better prompts
+  \item Reduce hallucinations by enforcing citations
+  \item Add a ``safe executor'' that rejects invalid actions
+  \item Add retry logic and better logs (what failed, why, what next)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Deliverable}
+\begin{itemize}
+  \item Notebook: \texttt{notebooks/lecture\_3\_support\_triage\_api.ipynb}
+  \item Output tables in \texttt{data/outputs/}:
+    \begin{itemize}
+      \item \texttt{triage.csv}, \texttt{draft\_replies.csv}, \texttt{actions\_log.csv}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Extensions / Optional challenges}
+\begin{itemize}
+  \item \textbf{Stronger grounding}: require exact quotes; reject replies that reference uncited facts
+  \item \textbf{Better retrieval}: upgrade keyword overlap to embeddings or hybrid; measure impact on quality
+  \item \textbf{Ticket state machine}: enforce allowed transitions (new $\rightarrow$ triaged $\rightarrow$ awaiting\_customer $\rightarrow$ resolved)
+  \item \textbf{Safer execution}: per-action schema validation + dry-run mode + retry/backoff + richer logs
+  \item \textbf{Adversarial tickets}: include prompt injection in ticket text; harden with instruction hierarchy + allow-lists
+\end{itemize}
 \end{frame}
 
 \end{document}
