@@ -1,0 +1,33 @@
+Technology Frequency Analysis
+==================================================
+
+R : 1436
+Go: 79
+SQL: 53
+.NET: 29
+Linux: 23
+Oracle: 18
+API: 15
+Java: 14
+HTML: 13
+CSS: 13
+AWS: 11
+Python: 10
+JavaScript: 10
+MySQL: 10
+C#: 9
+Scala: 8
+Git: 8
+REST: 6
+PHP: 5
+Unix: 5
+Express: 5
+Scrum: 5
+C++: 3
+XML: 3
+Agile: 3
+React: 2
+Spring: 2
+Swift: 1
+Spark: 1
+JIRA: 1
