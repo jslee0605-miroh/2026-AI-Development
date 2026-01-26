@@ -44,12 +44,16 @@ This repository contains materials for a four-part workshop on AI development fo
     - [AI Blindspots](https://ezyang.github.io/ai-blindspots/) - Understanding where AI agents fail and how to design around it.
     - [Scaling Agents](https://cursor.com/blog/scaling-agents) - Cursor's insights on building production-grade AI agents.
 
-## Under Construction below!
+### Lecture 3 (Improving Performance)
+- **Topic**: Context Engineering Techniques for Better Results
+- **Slides**: `lecture_3/slides/lecture_3.pdf`
+- **Notebook**: `lecture_3/notebooks/lecture_3_resume_scorer_improvement.ipynb`
+- **Data**: `lecture_3/data/resumes_final.csv` (130 resumes), `lecture_3/data/job_req_senior.md`
+- **Key Techniques**: Decomposition, Grounding with Citations, Few-Shot Examples
+- **Teaching Example**: Expense report validator (slides only)
+- **Hands-on**: Apply techniques to improve the resume scorer from Lecture 2
 
-### Lecture 3 (grounding + API actions)
-- **Problem**: Support ticket triage with grounded replies and safe external actions
-- **Notebook**: `lecture_3/notebooks/lecture_3_support_triage_api.ipynb`
-- **Data/docs**: `lecture_3/data/` (tickets + KB + stub API data)
+## Under Construction below!
 
 ### Lecture 4 (tools/MCP-like + orchestrator)
 - **Problem**: Research brief generation using a tool registry and a simple orchestrator loop
@@ -74,3 +78,6 @@ Example:
 cd lecture_1/slides
 pdflatex lecture_1.tex
 ```
+
+## Improvements for next time
+
